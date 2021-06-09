@@ -8,7 +8,7 @@ Before we can spin up a cluster on Azure Kubernetes Service (AKS), we'll first n
 
 Follow one of these tutorials to install Docker:
 1. [Docker Desktop (Windows)](https://docs.docker.com/docker-for-windows/install/)
-2. [Docker Desltop (Mac)](https://docs.docker.com/docker-for-mac/install/)
+2. [Docker Desktop (Mac)](https://docs.docker.com/docker-for-mac/install/)
 3. [Docker Engine (Linux)](https://docs.docker.com/engine/install/#server)
 
 Once it's installed, start it up and leave it running in the background.
@@ -405,6 +405,12 @@ helm upgrade my-chart ./workshop-helm-chart
 
 The Helm chart and its dependencies should now be reachable and deploy correctly.
 
+## Environment Variables & Secrets
+
+Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the finance package from M13. You can find these environment variables in the configuration from the `order-processing` app service.
+
+> Credentials like DB passwords should be stored as secrets
+
 ## Dealing with Services
 
 We can use the Module 13 dashboard to simulate a high load on our Service:
@@ -486,27 +492,29 @@ await fetch("/scenario", {
 ```
 
 ## Extension Exercises
-- look at the logs `kubectl logs`
-  - note these are ephemeral...
-- add a startup probe to make sure app only receives traffic when it's up
-  - we're scaling the app automatically, but we don't know how well things will respond
-  - we can add probes, startup and status to see if things are behaving okay
-  - an example might look like
+- Look at the logs `kubectl logs`
+  - Note these are ephemeral...
+- Add a startup probe to make sure app only receives traffic when it's up
+  - We're scaling the app automatically, but we don't know how well things will respond
+  - We can add probes, startup and status to see if things are behaving okay
+  - An example might look like
   ```
   startupProbe:
     httpGet:
-      path: /healthz
+      path: /health
       port: liveness-port
     failureThreshold: 30
     periodSeconds: 60
   ```
   which should live under a container definition within the `containers` block of the deployment manifest
-  - we don't have a healthcheck endpoint in our app, so lets add one that just returns 200
-  - then publish our app, and our helm chart and watch what happens
-  - that probe might take a long time to check the app is up and running, so could reduce the timeout?
-- under normal load, the memory and CPU we allocated earlier might be much more than needed 
-  - tune the resource allocations using `kubectl top` under normal and heavy load and see how it response to traffic spikes
-- we've so far only used a single service and exposed it fairly crudely, but what if we want a more advanced ingress? https://docs.microsoft.com/en-us/azure/aks/ingress-basic
+  - We don't have a healthcheck endpoint in our app, so lets add one that just returns 200
+  - Then publish our app, and our helm chart and watch what happens
+  - That probe might take a long time to check the app is up and running, so could reduce the timeout?
+- Under normal load, the memory and CPU we allocated earlier might be much more than needed 
+  - Tune the resource allocations using `kubectl top` under normal and heavy load and see how it response to traffic spikes
+- We've so far only used a single service and exposed it fairly crudely, but what if we want a more advanced ingress? https://docs.microsoft.com/en-us/azure/aks/ingress-basic
+- Add an RBAC rule for accessing DB credentials
+- Add support for encryption at rest of the secret
 
 ## Tidying up
 
@@ -514,7 +522,7 @@ We've finished our adventures in AKS for now, so it's time to delete our resourc
 This will also delete all of its nested resources.
 
 ```
-az group delete --name myResourceGroup
+az group delete --name myWorkshopResourceGroup
 ```
 
 > If we were planning to reuse the resource group, then we could just delete the cluster (along with its nested resources) by running `az aks delete --name myAKSCluster --resource-group myResourceGroup`.
