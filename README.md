@@ -342,7 +342,7 @@ Let's make it easier to change dynamically by using a variable instead.
 
 First, add a variable in `values.yaml`, referencing our newly created image, e.g. `image: <loginServer>/our-image-name:v1`.
 
-> `<loginServer>` should be replaced, as before
+> `<loginServer>` should be replaced, as before.
 
 Next, update `deployment.yaml` to use this value.
 As we're updating the chart, update the `version` in `Chart.yaml` too.
@@ -405,15 +405,15 @@ helm upgrade my-chart ./workshop-helm-chart
 
 The Helm chart and its dependencies should now be reachable and deploy correctly.
 
-## Environment Variables & Secrets
+## Environment variables & secrets
 
 Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the finance package from M13. You can find these environment variables in the configuration from the `order-processing` app service.
 
-> Credentials like DB passwords should be stored as secrets
+> Credentials like DB passwords should be stored as secrets.
 
 ## Dealing with Services
 
-We can use the Module 13 dashboard to simulate a high load on our Service:
+We can simulate a high load on our Service by running this code in a browser console on the dashboard from Module 13:
 
 ```
 await fetch("/scenario", {
@@ -491,30 +491,49 @@ await fetch("/scenario", {
   body: JSON.stringify({scenario: "Initial"})})
 ```
 
-## Extension Exercises
-- Look at the logs `kubectl logs`
-  - Note these are ephemeral...
-- Add a startup probe to make sure app only receives traffic when it's up
-  - We're scaling the app automatically, but we don't know how well things will respond
-  - We can add probes, startup and status to see if things are behaving okay
-  - An example might look like
-  ```
-  startupProbe:
-    httpGet:
-      path: /health
-      port: liveness-port
-    failureThreshold: 30
-    periodSeconds: 60
-  ```
-  which should live under a container definition within the `containers` block of the deployment manifest
-  - We don't have a healthcheck endpoint in our app, so lets add one that just returns 200
-  - Then publish our app, and our helm chart and watch what happens
-  - That probe might take a long time to check the app is up and running, so could reduce the timeout?
-- Under normal load, the memory and CPU we allocated earlier might be much more than needed 
-  - Tune the resource allocations using `kubectl top` under normal and heavy load and see how it response to traffic spikes
-- We've so far only used a single service and exposed it fairly crudely, but what if we want a more advanced ingress? https://docs.microsoft.com/en-us/azure/aks/ingress-basic
-- Add an RBAC rule for accessing DB credentials
-- Add support for encryption at rest of the secret
+## Extension exercises
+
+> Kubernetes stores ephemeral logs for Pods, which you can view with the `kubectl logs` command.
+
+We're currently scaling the app automatically, but we aren't monitoring how healthy the app is.
+We can improve this by adding some probes, such as a startup probe.
+
+### Startup probes
+
+A startup probe checks whether an application is running.
+If the probe notices that the application isn't running then it triggers the parent container's restart policy.
+
+> The default restart policy is `Always`, which causes containers to restart whenever their application exits.
+> This applies even if the exit code indicated success.
+
+Startup probes should be declared within the `containers` block of the deployment manifest.
+A typical startup probe definition could look like this:
+
+```
+startupProbe:
+  httpGet:
+    path: /health
+    port: liveness-port
+  failureThreshold: 30
+  periodSeconds: 60
+```
+
+> This probe could take a long time to check that the app is up and running, so a reduced timeout could be more effective.
+
+We don't have a healthcheck endpoint in our app, so lets add one that just returns 200.
+We can then publish our app, along with our helm chart, and watch what happens.
+
+### Resource levels
+
+Under normal load, the memory and CPU we allocated earlier might be much more than needed.
+Tune the resource allocations under normal and heavy load and see how the application response to traffic spikes.
+You can use the `kubectl top` command to view resource utilisation on Nodes and Pods.
+
+### Security
+
+We've so far only used a single service and exposed it fairly crudely, but what if we want a more advanced [ingress](https://docs.microsoft.com/en-us/azure/aks/ingress-basic)?
+Try adding some RBAC rules for accessing DB credentials.
+You could also add support for encrypting secrets.
 
 ## Tidying up
 
