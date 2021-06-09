@@ -19,7 +19,7 @@ Once it's installed, start it up and leave it running in the background.
 2. Authenticate with your Azure account: open a terminal and run `az login`.
 3. Make sure you're running commands against the right subscription: run `az account set --subscription="SUBSCRIPTION_ID"`, replacing `SUBSCRIPTION_ID` with your Softwire Academy subscription ID.
 
-> You can find your subscription ID by logging in to the [Azure Portal](portal.azure.com), navigating to the Softwire Academy directory, and opening the Subscriptions service.
+> You can find your subscription ID by logging in to the [Azure Portal](https://portal.azure.com), navigating to the Softwire Academy directory, and opening the Subscriptions service.
 
 ### The Kubernetes CLI
 
@@ -33,7 +33,7 @@ Follow [this tutorial](https://helm.sh/docs/intro/install/) to install the Helm 
 
 Every resource that we create today will live inside a resource group, which will be created and given to you at the start of the workshop.
 
-> You may find it helpful to follow along in the [Azure Portal](portal.azure.com) as we create each resource.
+> You may find it helpful to follow along in the [Azure Portal](https://portal.azure.com) as we create each resource.
 > You can use the search bar in the Azure Portal to find and view this resource group.
 
 ## Installing a Service
