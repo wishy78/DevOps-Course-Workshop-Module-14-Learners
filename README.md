@@ -531,13 +531,13 @@ You can use the `kubectl top` command to view resource utilisation on Nodes and 
 
 ### Incorporating the Finance Package
 
-Up to now we've only been working with one Docker image (for the Image Processing app) and the corresponding pods connect to the Finance Package app deployed on Azure. Let's now try incorporating the Finance Package within the cluster.
+Up to now we've only been working with one Docker image (for the Order Processing app) and the corresponding pods connect to the Finance Package app deployed on Azure. Let's now try incorporating the Finance Package within the cluster.
 
 > The Docker Hub image for the Finance Package app is available under the name `corndelldevopscourse/mod13-workshop-finance-package:scenarios`
 
-Like with the Image Processing app, you'll need to scrape the environment variables from the app configuration.
+Like with the Order Processing app, you'll need to scrape the environment variables from the app configuration.
 
-You'll also want to setup a service so that the Image Processing app can access the Finance Package app and vice versa.
+You'll also want to setup a service so that the Order Processing app can access the Finance Package app and vice versa.
 > Make sure not to expose the Finance Package externally!
 ### Security
 
