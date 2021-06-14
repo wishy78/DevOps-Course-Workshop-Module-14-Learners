@@ -529,6 +529,16 @@ Under normal load, the memory and CPU we allocated earlier might be much more th
 Tune the resource allocations under normal and heavy load and see how the application response to traffic spikes.
 You can use the `kubectl top` command to view resource utilisation on Nodes and Pods.
 
+### Incorporating the Finance Package
+
+Up to now we've only been working with one Docker image (for the Image Processing app) and the corresponding pods connect to the Finance Package app deployed on Azure. Let's now try incorporating the Finance Package within the cluster.
+
+> The Docker Hub image for the Finance Package app is available under the name `corndelldevopscourse/mod13-workshop-finance-package:scenarios`
+
+Like with the Image Processing app, you'll need to scrape the environment variables from the app configuration.
+
+You'll also want to setup a service so that the Image Processing app can access the Finance Package app and vice versa.
+> Make sure not to expose the Finance Package externally!
 ### Security
 
 We've so far only used a single service and exposed it fairly crudely, but what if we want a more advanced [ingress](https://docs.microsoft.com/en-us/azure/aks/ingress-basic)?
