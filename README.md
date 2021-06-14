@@ -463,7 +463,7 @@ spec:
 
 Now if we watch the load on the Node, we'll see more Pods being spun up as the CPU utilisation increases.
 
-Unfortunately, we'll the hit resource limits of our Nodes (5*500m CPU = 2 CPUs), which is more than we've allocated to our Node.
+Unfortunately, we'll the hit resource limits of our Nodes (5\*500m CPU = 2.5 CPUs), which is more than we've allocated to our Node.
 However, we can use a cluster autoscaler to automatically create more Nodes.
 
 ```
