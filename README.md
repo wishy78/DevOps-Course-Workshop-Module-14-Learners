@@ -93,16 +93,16 @@ We can create a `module-14-deployment-2-replicas.yaml` file to define our Deploy
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: module-14
+  name: module-14-deployment
 spec:
   selector:
     matchLabels:
-      app: module-14
+      app: module-14-pod
   replicas: 2
   template:
     metadata:
       labels:
-        app: module-14
+        app: module-14-pod
     spec:
       containers:
         - name: container-name
@@ -136,11 +136,11 @@ Let's create a LoadBalancer Service that exposes a single external IP address fo
 kind: Service
 apiVersion: v1
 metadata:
-  name: module-14
+  name: module-14-service
 spec:
   type: LoadBalancer
   selector:
-    app: module-14
+    app: module-14-pod
   ports:
   - protocol: TCP
     port: 80
@@ -181,16 +181,16 @@ We can manually adjust that by changing the number of replicas in our Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: module-14
+  name: module-14-deployment
 spec:
   selector:
     matchLabels:
-      app: module-14
+      app: module-14-pod
   replicas: 3
   template:
     metadata:
       labels:
-        app: module-14
+        app: module-14-pod
     spec:
       containers:
         - name: container-name
@@ -417,6 +417,7 @@ Now that your containers are being deployed correctly we'll want to pass through
 
 > Credentials like DB passwords should be stored as secrets.
 
+You may want to look at the docs on [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/), [creating secrets](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/) and [accessing secrets](https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables)
 ## Dealing with Services
 
 We can simulate a high load on our Service by running this code in a browser console on the dashboard from Module 13:
