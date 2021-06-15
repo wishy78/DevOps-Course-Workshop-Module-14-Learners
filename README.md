@@ -349,7 +349,7 @@ As we're updating the chart, update the `version` in `Chart.yaml` too.
 
 > Helm uses the syntax `{{ .Values.variableName }}` in templates (using Go templates).
 
-You can run `helm template ./workshop-helm-chart` in the `workshop-helm-chart` folder to preview your changes and see what will get deployed.
+You can run `helm template ./workshop-helm-chart` to preview your changes and see what will get deployed.
 Once you're happy with the template, try upgrading the chart to use the new image: `helm upgrade my-chart ./workshop-helm-chart`.
 
 ### Configuring permissions
