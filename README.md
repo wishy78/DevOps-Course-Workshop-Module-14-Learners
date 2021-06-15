@@ -46,7 +46,7 @@ Now that we have a resource group, we can create a Kubernetes cluster inside it.
 We'll just create a single Node for now; we'll scale up the cluster later in the workshop.
 
 ```
-az aks create --resource-group myResourceGroup --name myAKSCluster --node-count 1 --generate-ssh-keys
+az aks create --resource-group myResourceGroup --name myAKSCluster --node-count 1 --node-vm-size standard_b2s --generate-ssh-keys
 ```
 
 > The `az aks create` command can take around 10 minutes to complete.
@@ -304,8 +304,14 @@ Next, we'll build an image that could be added to the registry.
 Our image will be based on the Module 13 Workshop application:
 1. Copy the contents of the [repository](https://github.com/CorndelWithSoftwire/DevOps-Course-Workshop-Module-13-Learners) into a new `module-13-workshop-application` folder (please do not copy over your code from the previous workshop).
 2. Run `cd module-13-workshop-application` to navigate to the folder.
-3. Run `docker build -t our-image-name:v1 .` to build an image of the Module 13 Workshop application.
-4. Run `cd ..` to move back out to the parent folder.
+3. Fix up the error that you found during the M13 workshop
+4. Run `docker build -t our-image-name:v1 .` to build an image of the Module 13 Workshop application.
+5. Run `cd ..` to move back out to the parent folder.
+
+<details>
+  <summary>Hint for M13 fix</summary>
+  Make sure that the scheduled job is using `date_placed_local` rather than `date_placed` for the payload sent to the finance package
+</details>
 
 > If you run `docker image ls` then you should see the newly created image.
 
@@ -349,7 +355,7 @@ As we're updating the chart, update the `version` in `Chart.yaml` too.
 
 > Helm uses the syntax `{{ .Values.variableName }}` in templates (using Go templates).
 
-You can run `helm template ./workshop-helm-chart` in the `workshop-helm-chart` folder to preview your changes and see what will get deployed.
+You can run `helm template ./workshop-helm-chart` to preview your changes and see what will get deployed.
 Once you're happy with the template, try upgrading the chart to use the new image: `helm upgrade my-chart ./workshop-helm-chart`.
 
 ### Configuring permissions
