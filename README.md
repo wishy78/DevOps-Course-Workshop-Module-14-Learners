@@ -301,17 +301,11 @@ We'll need this information when pushing to the registry, so make a note of it.
 
 Next, we'll build an image that could be added to the registry.
 
-Our image will be based on the Module 13 Workshop application:
-1. Copy the contents of the [repository](https://github.com/CorndelWithSoftwire/DevOps-Course-Workshop-Module-13-Learners) into a new `module-13-workshop-application` folder (please do not copy over your code from the previous workshop).
-2. Run `cd module-13-workshop-application` to navigate to the folder.
-3. Fix up the error that you found during the M13 workshop
-4. Run `docker build -t our-image-name:v1 .` to build an image of the Module 13 Workshop application.
-5. Run `cd ..` to move back out to the parent folder.
+Our image will be based on the Module 13 Workshop application, which we've copied into this repository (with the bugfix you made last month)
 
-<details>
-  <summary>Hint for M13 fix</summary>
-  Make sure that the scheduled job is using `date_placed_local` rather than `date_placed` for the payload sent to the finance package
-</details>
+1. Run `cd order-processing-app` to navigate to the folder.
+2. Run `docker build --target production --tag our-image-name:v1 .` to build an image of the Module 13 Workshop application.
+3. Run `cd ..` to move back out to the parent folder.
 
 > If you run `docker image ls` then you should see the newly created image.
 
