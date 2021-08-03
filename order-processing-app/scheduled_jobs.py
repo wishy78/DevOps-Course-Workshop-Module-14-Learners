@@ -1,46 +1,61 @@
-from data.database import save_order, get_all_orders
-from products import create_product_download
-from apscheduler.schedulers.background import BackgroundScheduler
 import requests
+from datetime import datetime
+from PIL import Image
+from pathlib import Path
+from apscheduler.schedulers.background import BackgroundScheduler
+
+from processing.process_image import process_image
+from utils.timeit import time_it
+from data.database import get_next_order_to_process, save_order
+from flask_config import Config
 
 
 def initialise_scheduled_jobs(app):
+    if (not Config.SCHEDULED_JOB_ENABLED):
+        app.logger.warn("Scheduled job disabled")
+        return
     scheduler = BackgroundScheduler()
     scheduler.add_job(
-        func=process_orders,
+        func=process_order,
         args=[app],
         trigger="interval",
+        max_instances=app.config["SCHEDULED_JOB_MAX_INSTANCES"],
         seconds=app.config["SCHEDULED_JOB_INTERVAL_SECONDS"],
     )
     scheduler.start()
 
 
-def process_orders(app):
+def process_order(app):
     with app.app_context():
-        orders = get_queue_of_orders_to_process()
-        if len(orders) == 0:
+        order = get_next_order_to_process()
+        if order == None:
+            app.logger.warn(f"No orders to process")
             return
 
-        order = orders[0]
+        app.logger.info(f"Processing order {order.id} at {str(datetime.now())}")
 
-        payload = {
-            "product": order.product,
-            "customer": order.customer,
-            "date": order.date_placed_local.isoformat(),
-        }
+        try:
+            image = load_img(order.image_url)
 
-        response = requests.post(
-            app.config["FINANCE_PACKAGE_URL"] + "/ProcessPayment",
-            json=payload
-        )
+            (edginess, result_image) = process_image(image)
+            save_image(result_image, str(order.image_id))
+            order.edginess = edginess
 
-        response.raise_for_status()
+            app.logger.info(f"Successfully processed order {order.id}")
+            order.set_as_processed()
+            save_order(order)
+        except:
+            app.logger.exception(f"Failed to process order {order.id}")
+            order.set_as_failed()
+            save_order(order)
 
-        order.set_as_processed()
-        save_order(order)
 
-def get_queue_of_orders_to_process():
-    allOrders = get_all_orders()
-    queuedOrders = filter(lambda order: order.date_processed == None, allOrders)
-    sortedQueue = sorted(queuedOrders, key= lambda order: order.date_placed)
-    return list(sortedQueue)
+@time_it
+def load_img(url) -> Image.Image:
+    return Image.open(requests.get(url, stream=True).raw)
+
+@time_it
+def save_image(pic: Image.Image, name: str):
+    dir_path = Path(Config.IMAGE_OUTPUT_FOLDER)
+    dir_path.mkdir(exist_ok=True)
+    pic.save(dir_path.joinpath(name + ".png"), "PNG")

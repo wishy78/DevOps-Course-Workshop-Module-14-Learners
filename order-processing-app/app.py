@@ -1,12 +1,14 @@
-from flask import Flask, render_template, request
-from datetime import datetime, timedelta, timezone
+from flask import Flask, render_template, request, send_from_directory
+from datetime import datetime, timezone
 
 from flask_config import Config
 from data.database import initialise_database, add_order, clear_orders, count_orders, get_orders_to_display, get_queued_count, get_recently_placed_count, get_recently_processed_count
-from data.order import QUEUED
 from scheduled_jobs import initialise_scheduled_jobs
 from products import create_product_download
 import requests
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -18,13 +20,15 @@ initialise_scheduled_jobs(app)
 @app.route("/")
 def index():
     orders = get_orders_to_display()
+    total_orders = count_orders()
     queue_count = get_queued_count()
     recently_placed_count = get_recently_placed_count()
     recently_processed_count = get_recently_processed_count()
 
     return render_template(
         "layout.html", orders=orders, queue_count=queue_count, recently_placed_count=recently_placed_count,
-        recently_processed_count=recently_processed_count
+        recently_processed_count=recently_processed_count, total_count=total_orders,
+        instance_id=app.config["INSTANCE_ID"]
     )
 
 @app.route("/count")
@@ -47,6 +51,13 @@ def new_order():
 
     return f"Added: {order}"
 
+
+@app.route('/output_images/<path:path>')
+def send_js(path):
+    response = send_from_directory(app.config["IMAGE_OUTPUT_FOLDER"], path)
+    response.cache_control.max_age = 3600
+    response.cache_control.no_cache = None
+    return response
 
 @app.route("/scenario", methods=["POST"])
 def set_scenario():

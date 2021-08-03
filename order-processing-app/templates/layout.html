@@ -15,11 +15,11 @@
       crossorigin="anonymous"
     />
 
-    <title>{% block title %}Products Dashboard{% endblock %}</title>
+    <title>{% block title %}Processing Dashboard{% endblock %}</title>
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
-      <a class="navbar-brand" href="/">Products Dashboard</a>
+      <a class="navbar-brand" href="/">Processing Dashboard (Instance {{instance_id}})</a>
     </nav>
 
     <div class="container">
@@ -58,20 +58,41 @@
         <ul class="list-group mb-4">
           {% for order in orders %}
           <li
-            class="list-group-item
+            class="list-group-item d-flex flex-row flex-wrap
             {% if order.status == 'Complete' %} list-group-item-success
+            {% elif order.status == 'Failed' %} list-group-item-danger
+            {% elif order.status == 'Processing' %} list-group-item-primary
             {% else %} list-group-item-warning
             {% endif %}"
           >
-            <p>Customer:<b> {{ order.customer }}</b></p>
-            <p>Product: <b>{{ order.product }}</b></p>
-            <p>Placed: <b>{{ order.date_placed_local.strftime('%d/%m/%Y %H:%M:%S') }}</b></p>
-            <p>Processed: <b>{{ order.date_processed_local.strftime('%d/%m/%Y %H:%M:%S') if order.date_processed else None}}</b></p>
+            <div style="min-width: 235px;">
+              <p>Customer:<b> {{ order.customer }}</b></p>
+              <p>Placed: <b>{{ order.date_placed_local.strftime('%d/%m/%Y %H:%M:%S') }}</b></p>
+              <p>Status: <b>{{ order.status }}</b></p>
+              {% if order.date_processed %}
+                <p>Processed: <b>{{ order.date_processed_local.strftime('%d/%m/%Y %H:%M:%S') if order.date_processed else None}}</b></p>
+              {% endif %}
+              {% if order.date_processing %}
+                <p>Processing time: {{ order.processing_duration_seconds }} seconds</p>
+                <p>Processing by instance: {{ order.processed_by }}</p>
+              {% endif %}
+              {% if order.edginess != None %}
+                <p>Edginess: {{ order.edginess }}</p>
+              {% endif %}
+            </div>
+            <div style="min-width: 300px;" class="m-2">
+              <img height="200" src="{{ order.image_url }}" />
+            </div>
+            <div style="min-width: 300px;" class="m-2">
+              {% if order.status == "Complete" %}
+                <img height="200" src="{{ order.output_image_url }}" />
+              {% endif %}
+            </div>
           </li>
           {% endfor %}
         </ul>
-        {% if orders|length < recently_processed_count + queue_count %}
-          <p class="text-muted">Plus {{ recently_processed_count + queue_count - orders|length }} more orders</p>
+        {% if orders|length < total_count %}
+          <p class="text-muted">Plus {{ total_count - orders|length }} more orders</p>
         {% endif %}
       </div>
     </div>

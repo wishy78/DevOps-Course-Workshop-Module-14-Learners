@@ -7,6 +7,7 @@ Before we can spin up a cluster on Azure Kubernetes Service (AKS), we'll first n
 ### Docker
 
 Follow one of these tutorials to install Docker:
+
 1. [Docker Desktop (Windows)](https://docs.docker.com/docker-for-windows/install/)
 2. [Docker Desktop (Mac)](https://docs.docker.com/docker-for-mac/install/)
 3. [Docker Engine (Linux)](https://docs.docker.com/engine/install/#server)
@@ -301,7 +302,8 @@ We'll need this information when pushing to the registry, so make a note of it.
 
 Next, we'll build an image that could be added to the registry.
 
-Our image will be based on the Module 13 Workshop application, which we've copied into this repository (with the bugfix you made last month)
+We've included an adapted version of the Module 13 order processing application in this repository.
+Instead of processing orders it now processes images, this is CPU intensive so it will be easier to trigger autoscaling later in the exercise.
 
 1. Run `cd order-processing-app` to navigate to the folder.
 2. Run `docker build --target production --tag our-image-name:v1 .` to build an image of the Module 13 Workshop application.
@@ -422,7 +424,7 @@ We can simulate a high load on our Service by running this code in a browser con
 await fetch("/scenario", {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({scenario: "VeryHighLoad"})})
+  body: JSON.stringify({scenario: "HighLoad"})})
 ```
 
 Let's run `kubectl top pod` to watch the load on the application increase.
@@ -460,7 +462,7 @@ spec:
     kind: Deployment
     name: {{ .Values.serviceName }}
   minReplicas: 1
-  maxReplicas: 5
+  maxReplicas: 8
   targetCPUUtilizationPercentage: 80
 ```
 
@@ -494,6 +496,14 @@ await fetch("/scenario", {
   body: JSON.stringify({scenario: "Initial"})})
 ```
 
+You can also reset the queue if it has grown out of control.
+
+```javascript
+await fetch("/reset", {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' }})
+```
+
 ## Extension exercises
 
 > Kubernetes stores ephemeral logs for Pods, which you can view with the `kubectl logs` command.
@@ -525,6 +535,18 @@ startupProbe:
 
 We don't have a healthcheck endpoint in our app, so lets add one that just returns 200.
 We can then publish our app, along with our helm chart, and watch what happens.
+
+### Persistent Volumes
+
+The app stores the output images in a local folder.
+If an image is processed by a different Pod to the one receiving the request then the output image will not be visible.
+
+We can resolve this by attaching the same Persistent Volume to all our Pod instances.
+Configure a Persistent Volume using the `azurefiles` storage type in your Helm Chart and add a Persistent Volume Claim to your Deployment definition.
+
+You should also update the configuration of the original App Service to set `SCHEDULED_JOB_ENABLED=false` so only your cluster is doing the processing.
+
+You can set the `IMAGE_OUTPUT_FOLDER` environment variable to change where the processing app stores the images it creates.
 
 ### Resource levels
 
