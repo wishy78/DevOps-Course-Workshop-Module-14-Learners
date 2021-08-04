@@ -7,7 +7,6 @@ from sqlalchemy import or_
 from flask_config import Config
 
 db = SQLAlchemy()
-Session = db.create_session(options={})
 from data.order import Order, PROCESSING, QUEUED
 
 

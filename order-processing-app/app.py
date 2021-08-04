@@ -53,7 +53,7 @@ def new_order():
 
 
 @app.route('/output_images/<path:path>')
-def send_js(path):
+def output_images(path):
     response = send_from_directory(app.config["IMAGE_OUTPUT_FOLDER"], path)
     response.cache_control.max_age = 3600
     response.cache_control.no_cache = None
