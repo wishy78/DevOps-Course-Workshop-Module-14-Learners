@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+
+    <title>{% block title %}Processing Dashboard{% endblock %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+      <a class="navbar-brand" href="/">Processing Dashboard (Instance {{instance_id}})</a>
+    </nav>
+
+    <div class="container">
+        <div class="row text-center mb-4">
+          <div class="col-sm">
+            <div class="card {% if queue_count > 0 %} bg-warning {% else %} text-white bg-success {% endif %}">
+              <div class="card-body">
+                <p>In Queue:</p>
+                <p class="display-4">{{ queue_count }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm">
+            <div class="card text-white {% if recently_placed_count == 0 %} bg-danger {% else %} bg-success {% endif %}">
+              <div class="card-body ">
+                <p>Placed in last 10 minutes:</p>
+                <p class="display-4">{{ recently_placed_count }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm">
+            <div class="card
+            {% if recently_processed_count == 0 %} text-white bg-danger
+            {% elif recently_processed_count < recently_placed_count %} bg-warning
+            {% else %} text-white bg-success
+            {% endif %}">
+              <div class="card-body">
+                <p>Processed in last 10 minutes:</p>
+                <p class="display-4">{{ recently_processed_count }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <ul class="list-group mb-4">
+          {% for order in orders %}
+          <li
+            class="list-group-item d-flex flex-row flex-wrap
+            {% if order.status == 'Complete' %} list-group-item-success
+            {% elif order.status == 'Failed' %} list-group-item-danger
+            {% elif order.status == 'Processing' %} list-group-item-primary
+            {% else %} list-group-item-warning
+            {% endif %}"
+          >
+            <div style="min-width: 235px;">
+              <p>Customer:<b> {{ order.customer }}</b></p>
+              <p>Placed: <b>{{ order.date_placed_local.strftime('%d/%m/%Y %H:%M:%S') }}</b></p>
+              <p>Status: <b>{{ order.status }}</b></p>
+              {% if order.date_processed %}
+                <p>Processed: <b>{{ order.date_processed_local.strftime('%d/%m/%Y %H:%M:%S') if order.date_processed else None}}</b></p>
+              {% endif %}
+              {% if order.date_processing %}
+                <p>Processing time: {{ order.processing_duration_seconds }} seconds</p>
+                <p>Processing by instance: {{ order.processed_by }}</p>
+              {% endif %}
+              {% if order.edginess != None %}
+                <p>Edginess: {{ order.edginess }}</p>
+              {% endif %}
+            </div>
+            <div style="min-width: 300px;" class="m-2">
+              <img height="200" src="{{ order.image_url }}" />
+            </div>
+            <div style="min-width: 300px;" class="m-2">
+              {% if order.status == "Complete" %}
+                <img height="200" src="{{ order.output_image_url }}" />
+              {% endif %}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% if orders|length < total_count %}
+          <p class="text-muted">Plus {{ total_count - orders|length }} more orders</p>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

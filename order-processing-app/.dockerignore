@@ -1,0 +1,8 @@
+.vscode
+__pycache__/
+.env
+.azure
+.venv
+output_images/
+Dockerfile
+.dockerignore

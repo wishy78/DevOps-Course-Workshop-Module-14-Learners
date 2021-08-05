@@ -7,6 +7,7 @@ Before we can spin up a cluster on Azure Kubernetes Service (AKS), we'll first n
 ### Docker
 
 Follow one of these tutorials to install Docker:
+
 1. [Docker Desktop (Windows)](https://docs.docker.com/docker-for-windows/install/)
 2. [Docker Desktop (Mac)](https://docs.docker.com/docker-for-mac/install/)
 3. [Docker Engine (Linux)](https://docs.docker.com/engine/install/#server)
@@ -45,7 +46,7 @@ In this section we'll create a cluster and use it to run an Nginx server behind 
 Now that we have a resource group, we can create a Kubernetes cluster inside it.
 We'll just create a single Node for now; we'll scale up the cluster later in the workshop.
 
-```
+```bash
 az aks create --resource-group myResourceGroup --name myAKSCluster --node-count 1 --node-vm-size standard_b2s --generate-ssh-keys
 ```
 
@@ -56,19 +57,19 @@ Before we can manage resources on the cluster, we need to get some access creden
 This command stores the necessary credentials in your `~/.kube/config` folder.
 `kubectl` will use these credentials when connecting to the Kubernetes API.
 
-```
+```bash
 az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
 ```
 
 Let's use `kubectl` to check if our Node is up and running.
 
-```
+```bash
 kubectl get nodes
 ```
 
 You should see a Node that's `Ready`, e.g.:
 
-```
+```text
 NAME                     STATUS   ROLES   AGE   VERSION 
 aks-default-28776938-0   Ready    agent   5m    v1.19.11
 ```
@@ -111,13 +112,13 @@ spec:
           - containerPort: 80
 ```
 
-```
+```bash
 kubectl apply -f module-14-deployment-2-replicas.yaml
 ```
 
 Now we can watch Pods be created during the deployment.
 
-```
+```bash
 kubectl get pods --watch
 ```
 
@@ -147,20 +148,20 @@ spec:
     targetPort: 80
 ```
 
-```
+```bash
 kubectl apply -f service.yaml
 ```
 
 The LoadBalancer Service type will create an externally accessible endpoint, but this can take a little while to complete.
 Let's watch the deployment as it progresses.
 
-```
+```bash
 kubectl get service module-14 --watch
 ```
 
 Initially, the `EXTERNAL-IP` will be `<pending>`, but after a short while we should get an external IP address.
 
-```
+```text
 NAME               TYPE           CLUSTER-IP   EXTERNAL-IP   PORT(S)          AGE
 module-14          LoadBalancer   10.0.37.27   <pending>     80:30572/TCP     6s
 ```
@@ -199,7 +200,7 @@ spec:
           - containerPort: 80
 ```
 
-```
+```bash
 kubectl apply -f module-14-deployment-3-replicas.yaml
 ```
 
@@ -208,7 +209,7 @@ It will then create an additional Pod.
 
 We can check that we now have three Pods.
 
-```
+```bash
 kubectl get pods --watch
 ```
 
@@ -218,7 +219,7 @@ kubectl get pods --watch
 
 Before we move on to Helm, let's get back to a clean slate by deleting our Deployment and Service.
 
-```
+```bash
 kubectl delete deployment module-14
 kubectl delete service module-14
 ```
@@ -237,7 +238,7 @@ However, when creating professional applications, you might use a central chart 
 
 Rather than running `kubectl apply` on each manifest, we can use Helm to deploy them all together:
 
-```
+```bash
 helm install my-chart ./workshop-helm-chart
 ```
 
@@ -245,7 +246,7 @@ helm install my-chart ./workshop-helm-chart
 
 We can then view the status of the deployment:
 
-```
+```bash
 helm status my-chart
 ```
 
@@ -261,13 +262,13 @@ Let's say we want to apply some specific additional configuration, such as the n
 Looking in the `values.yaml` file, we can see we've already got a `replicas` field.
 We can optionally override that when deploying:
 
-```
+```bash
 helm upgrade --set replicas=4 my-chart ./workshop-helm-chart
 ```
 
 And then we can watch the new Pod being created:
 
-```
+```bash
 kubectl get pods --watch
 ```
 
@@ -282,7 +283,7 @@ We'll now have a look at using images from container registries.
 
 We'll start by using the Azure CLI to create a container registry, which will be hosted by Azure.
 
-```
+```bash
 az acr create --resource-group myResourceGroup --name myRegistryName --sku Basic
 ```
 
@@ -301,17 +302,12 @@ We'll need this information when pushing to the registry, so make a note of it.
 
 Next, we'll build an image that could be added to the registry.
 
-Our image will be based on the Module 13 Workshop application:
-1. Copy the contents of the [repository](https://github.com/CorndelWithSoftwire/DevOps-Course-Workshop-Module-13-Learners) into a new `module-13-workshop-application` folder (please do not copy over your code from the previous workshop).
-2. Run `cd module-13-workshop-application` to navigate to the folder.
-3. Fix up the error that you found during the M13 workshop
-4. Run `docker build -t our-image-name:v1 .` to build an image of the Module 13 Workshop application.
-5. Run `cd ..` to move back out to the parent folder.
+We've included an adapted version of the Module 13 order processing application in this repository.
+Instead of processing orders it now processes images, this is CPU intensive so it will be easier to trigger autoscaling later in the exercise.
 
-<details>
-  <summary>Hint for M13 fix</summary>
-  Make sure that the scheduled job is using `date_placed_local` rather than `date_placed` for the payload sent to the finance package
-</details>
+1. Run `cd order-processing-app` to navigate to the folder.
+2. Run `docker build --target production --tag our-image-name:v1 .` to build an image of the Module 13 Workshop application.
+3. Run `cd ..` to move back out to the parent folder.
 
 > If you run `docker image ls` then you should see the newly created image.
 
@@ -321,19 +317,19 @@ Now that we have an image, we can push it to the registry.
 
 Let's log in to the registry:
 
-```
+```bash
 az acr login --name myRegistryName
 ```
 
 And then tag the image specifically for the registry:
 
-```
+```bash
 docker tag our-image-name:v1 <login-server>/our-image-name:v1
 ```
 
 And finally, push the image to the registry:
 
-```
+```bash
 docker push <login-server>/our-image-name:v1
 ```
 
@@ -368,13 +364,13 @@ However, we can use a Secret to give our cluster access to the registry, letting
 
 First, let's enable our registry's admin user so we can manage credentials:
 
-```
+```bash
 az acr update -n myRegistryName --admin-enabled true
 ```
 
 Next, let's retrieve some credentials that can be used to access the registry:
 
-```
+```bash
 LOGIN_SERVER=<loginServer> # `<loginServer>` should be replaced, as before
 ACR_USERNAME=$(az acr credential show -n $LOGIN_SERVER --query="username" -o tsv)
 ACR_PASSWORD=$(az acr credential show -n $LOGIN_SERVER --query="passwords[0].value" -o tsv)
@@ -382,12 +378,13 @@ ACR_PASSWORD=$(az acr credential show -n $LOGIN_SERVER --query="passwords[0].val
 
 We can then create a Secret with those credentials:
 
-```
+```bash
 kubectl create secret docker-registry acr-secret \
     --docker-server=$LOGIN_SERVER \
     --docker-username=$ACR_USERNAME \
     --docker-password=$ACR_PASSWORD
 ```
+
 > Note that the multi-line delimiter `\` is for sh-based shells only, for powershell you'll want to use the backtick symbol ` instead
 
 Now that we have a Secret, we can update `deployment.yaml` to use it:
@@ -405,7 +402,7 @@ spec:
 
 Finally, we can update the chart `version` in `Chart.yaml` and upgrade the chart:
 
-```
+```bash
 helm upgrade my-chart ./workshop-helm-chart
 ```
 
@@ -418,15 +415,16 @@ Now that your containers are being deployed correctly we'll want to pass through
 > Credentials like DB passwords should be stored as secrets.
 
 You may want to look at the docs on [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/), [creating secrets](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/) and [accessing secrets](https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables)
+
 ## Dealing with Services
 
 We can simulate a high load on our Service by running this code in a browser console on the dashboard from Module 13:
 
-```
+```javascript
 await fetch("/scenario", {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({scenario: "VeryHighLoad"})})
+  body: JSON.stringify({scenario: "HighLoad"})})
 ```
 
 Let's run `kubectl top pod` to watch the load on the application increase.
@@ -435,7 +433,7 @@ Our Pods don't currently have any resource constraints, so the increasing load w
 
 Let's prevent that by adding some resource constraints to the Deployment:
 
-```
+```yaml
 resources:
   requests:
     memory: "0.5Gi"
@@ -453,7 +451,7 @@ The `requests` fields set the minimum resources available to a Pod, while the `l
 But what if we want to be able to scale up and handle peaks in demand while staying within resource limits?
 We could use a HorizontalPodAutoscaler to automatically spin Pods up and down depending on the application load:
 
-```
+```yaml
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -464,7 +462,7 @@ spec:
     kind: Deployment
     name: {{ .Values.serviceName }}
   minReplicas: 1
-  maxReplicas: 5
+  maxReplicas: 8
   targetCPUUtilizationPercentage: 80
 ```
 
@@ -473,7 +471,7 @@ Now if we watch the load on the Node, we'll see more Pods being spun up as the C
 Unfortunately, we'll the hit resource limits of our Nodes (5\*500m CPU = 2.5 CPUs), which is more than we've allocated to our Node.
 However, we can use a cluster autoscaler to automatically create more Nodes.
 
-```
+```bash
 az aks update \
   --resource-group myResourceGroup \
   --name myAKSCluster \
@@ -484,18 +482,26 @@ az aks update \
 
 This should automatically scale up our cluster during high load, which we can watch happen by looking at the Nodes:
 
-```
+```bash
 kubectl get node
 ```
 
 If we change our Service back to a lower load one, we should see our Service reduce load gradually.
 We can watch this using `kubectl get node` and `kubectl get pod`.
 
-```
+```javascript
 await fetch("/scenario", {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({scenario: "Initial"})})
+```
+
+You can also reset the queue if it has grown out of control.
+
+```javascript
+await fetch("/reset", {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' }})
 ```
 
 ## Extension exercises
@@ -516,7 +522,7 @@ If the probe notices that the application isn't running then it triggers the par
 Startup probes should be declared within the `containers` block of the deployment manifest.
 A typical startup probe definition could look like this:
 
-```
+```yaml
 startupProbe:
   httpGet:
     path: /health
@@ -529,6 +535,18 @@ startupProbe:
 
 We don't have a healthcheck endpoint in our app, so lets add one that just returns 200.
 We can then publish our app, along with our helm chart, and watch what happens.
+
+### Persistent Volumes
+
+The app stores the output images in a local folder.
+If an image is processed by a different Pod to the one receiving the request then the output image will not be visible.
+
+We can resolve this by attaching the same Persistent Volume to all our Pod instances.
+Configure a Persistent Volume using the `azurefiles` storage type in your Helm Chart and add a Persistent Volume Claim to your Deployment definition.
+
+You should also update the configuration of the original App Service to set `SCHEDULED_JOB_ENABLED=false` so only your cluster is doing the processing.
+
+You can set the `IMAGE_OUTPUT_FOLDER` environment variable to change where the processing app stores the images it creates.
 
 ### Resource levels
 
@@ -546,6 +564,7 @@ Like with the Order Processing app, you'll need to scrape the environment variab
 
 You'll also want to setup a service so that the Order Processing app can access the Finance Package app and vice versa.
 > Make sure not to expose the Finance Package externally!
+
 ### Security
 
 We've so far only used a single service and exposed it fairly crudely, but what if we want a more advanced [ingress](https://docs.microsoft.com/en-us/azure/aks/ingress-basic)?
@@ -557,7 +576,7 @@ You could also add support for encrypting secrets.
 We've finished our adventures in AKS for now, so it's time to delete our resource group.
 This will also delete all of its nested resources.
 
-```
+```bash
 az group delete --name myWorkshopResourceGroup
 ```
 
