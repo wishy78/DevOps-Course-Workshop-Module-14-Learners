@@ -306,7 +306,7 @@ We've included an adapted version of the Module 13 order processing application 
 Instead of processing orders it now processes images, this is CPU intensive so it will be easier to trigger autoscaling later in the exercise.
 
 1. Run `cd order-processing-app` to navigate to the folder.
-2. Run `docker build --target production --tag our-image-name:v1 .` to build an image of the Module 13 Workshop application.
+2. Run `docker build --target production --tag our-image-name:v1 .` to build an image of the application.
 3. Run `cd ..` to move back out to the parent folder.
 
 > If you run `docker image ls` then you should see the newly created image.
@@ -558,7 +558,7 @@ You can use the `kubectl top` command to view resource utilisation on Nodes and 
 
 Up to now we've only been working with one Docker image (for the Order Processing app) and the corresponding pods connect to the Finance Package app deployed on Azure. Let's now try incorporating the Finance Package within the cluster.
 
-> The Docker Hub image for the Finance Package app is available under the name `corndelldevopscourse/mod13-workshop-finance-package:scenarios`
+> The Docker Hub image for the Finance Package app is available under the name `corndelldevopscourse/mod13-workshop-finance-package:scenarios-m14`
 
 Like with the Order Processing app, you'll need to scrape the environment variables from the app configuration.
 
