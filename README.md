@@ -220,8 +220,8 @@ kubectl get pods --watch
 Before we move on to Helm, let's get back to a clean slate by deleting our Deployment and Service.
 
 ```bash
-kubectl delete deployment module-14
-kubectl delete service module-14
+kubectl delete deployment module-14-deployment
+kubectl delete service module-14-service
 ```
 
 We now just have a cluster with a single Node, without any Pods or load balancers.
