@@ -7,7 +7,7 @@ connect_string = f"Driver={{{pyodbc.drivers()[-1]}}};Server=tcp:{os.environ.get(
 url_encoded_connect_string = urllib.parse.quote_plus(connect_string)
 
 class Config:
-    INSTANCE_ID = os.environ.get("INSTANCE_ID", str(random.randint(100000, 999999)))
+    INSTANCE_ID = os.environ.get("HOSTNAME", str(random.randint(100000, 999999)))
     SQLALCHEMY_DATABASE_URI = f"mssql+pyodbc:///?odbc_connect={url_encoded_connect_string}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SCHEDULED_JOB_INTERVAL_SECONDS = int(os.environ.get('SCHEDULED_JOB_INTERVAL_SECONDS'))
