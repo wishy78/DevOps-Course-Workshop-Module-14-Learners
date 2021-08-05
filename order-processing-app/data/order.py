@@ -69,8 +69,8 @@ class Order(db.Model):
         return f"https://m14workshopimages.blob.core.windows.net/m14images/{self.image_id}.jpg"
 
     @property
-    def output_image_url(self):
-        return f"/{Config.IMAGE_OUTPUT_FOLDER}/{self.image_id}.png"
+    def output_image_path(self):
+        return f"/output_images/{self.image_id}.png"
 
     def set_as_failed(self):
         self.status = FAILED
