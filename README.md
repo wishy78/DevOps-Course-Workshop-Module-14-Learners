@@ -156,14 +156,14 @@ The LoadBalancer Service type will create an externally accessible endpoint, but
 Let's watch the deployment as it progresses.
 
 ```bash
-kubectl get service module-14 --watch
+kubectl get service module-14-service --watch
 ```
 
 Initially, the `EXTERNAL-IP` will be `<pending>`, but after a short while we should get an external IP address.
 
 ```text
 NAME               TYPE           CLUSTER-IP   EXTERNAL-IP   PORT(S)          AGE
-module-14          LoadBalancer   10.0.37.27   <pending>     80:30572/TCP     6s
+module-14-service  LoadBalancer   10.0.37.27   <pending>     80:30572/TCP     6s
 ```
 
 > You should now see a `module-14` Service on the `Services and ingresses` page of your cluster.
