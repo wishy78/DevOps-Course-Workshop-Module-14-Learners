@@ -542,11 +542,11 @@ The app stores the output images in a local folder.
 If an image is processed by a different Pod to the one receiving the request then the output image will not be visible.
 
 We can resolve this by attaching the same Persistent Volume to all our Pod instances.
-Configure a Persistent Volume using the `azurefiles` storage type in your Helm Chart and add a Persistent Volume Claim to your Deployment definition.
+Configure a Persistent Volume Claim using the `azurefile` Storage Class in your Helm Chart and mount the volumes in your Deployment definition.
 
 You should also update the configuration of the original App Service to set `SCHEDULED_JOB_ENABLED=false` so only your cluster is doing the processing.
 
-You can set the `IMAGE_OUTPUT_FOLDER` environment variable to change where the processing app stores the images it creates.
+> You can set the `IMAGE_OUTPUT_FOLDER` environment variable to change where the processing app stores the images it creates.
 
 ### Resource levels
 
