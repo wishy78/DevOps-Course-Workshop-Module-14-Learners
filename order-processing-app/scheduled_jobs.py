@@ -6,7 +6,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from processing.process_image import process_image
 from utils.timeit import time_it
-from data.database import get_next_order_to_process, save_order
+from data.database import get_next_order_to_process, mark_retried_orders_as_failed, requeue_stuck_orders, save_order
 from flask_config import Config
 
 
@@ -16,7 +16,7 @@ def initialise_scheduled_jobs(app):
         return
     scheduler = BackgroundScheduler()
     scheduler.add_job(
-        func=process_order,
+        func=process_next_order,
         args=[app],
         trigger="interval",
         max_instances=app.config["SCHEDULED_JOB_MAX_INSTANCES"],
@@ -25,8 +25,10 @@ def initialise_scheduled_jobs(app):
     scheduler.start()
 
 
-def process_order(app):
+def process_next_order(app):
     with app.app_context():
+        requeue_stuck_orders()
+        mark_retried_orders_as_failed()
         order = get_next_order_to_process()
         if order == None:
             app.logger.warn(f"No orders to process")
@@ -35,20 +37,23 @@ def process_order(app):
         app.logger.info(f"Processing order {order.id} at {str(datetime.now())}")
 
         try:
-            image = load_img(order.image_url)
-
-            (edginess, result_image) = process_image(image)
-            save_image(result_image, str(order.image_id))
-            order.edginess = edginess
-
+            process_order(order)
             app.logger.info(f"Successfully processed order {order.id}")
-            order.set_as_processed()
-            save_order(order)
         except:
             app.logger.exception(f"Failed to process order {order.id}")
-            order.set_as_failed()
+            order.mark_for_retry()
             save_order(order)
 
+
+def process_order(order):
+    image = load_img(order.image_url)
+
+    (edginess, result_image) = process_image(image)
+    save_image(result_image, str(order.image_id))
+    order.edginess = edginess
+
+    order.set_as_processed()
+    save_order(order)
 
 @time_it
 def load_img(url) -> Image.Image:

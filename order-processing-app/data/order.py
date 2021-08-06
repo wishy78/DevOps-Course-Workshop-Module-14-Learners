@@ -26,6 +26,7 @@ class Order(db.Model):
     processed_by = db.Column(db.String(100), nullable=True)
     download = db.Column(db.LargeBinary, nullable=True)
     edginess = db.Column(db.Integer, nullable=True)
+    failed_count = db.Column(db.Integer, nullable=False, default=0)
 
     def __init__(
         self, product, customer, date_placed, date_processed, date_processing, download, edginess, processed_by
@@ -72,8 +73,9 @@ class Order(db.Model):
     def output_image_path(self):
         return f"/output_images/{self.image_id}.png"
 
-    def set_as_failed(self):
-        self.status = FAILED
+    def mark_for_retry(self):
+        self.status = QUEUED
+        self.failed_count = self.failed_count + 1
 
     def set_as_processed(self):
         self.date_processed = datetime.now(tz=utc)
