@@ -1,10 +1,9 @@
 from sqlalchemy.dialects.mssql import DATETIMEOFFSET
 from datetime import datetime
 from pytz import utc, timezone
-from pathlib import Path
+from sqlalchemy import text
 
 from data.database import db
-from flask_config import Config
 
 local_timezone = timezone("Europe/London")
 
@@ -26,6 +25,7 @@ class Order(db.Model):
     processed_by = db.Column(db.String(100), nullable=True)
     download = db.Column(db.LargeBinary, nullable=True)
     edginess = db.Column(db.Integer, nullable=True)
+    failed_count = db.Column(db.Integer, nullable=False, server_default=text("0"))
 
     def __init__(
         self, product, customer, date_placed, date_processed, date_processing, download, edginess, processed_by
@@ -72,8 +72,9 @@ class Order(db.Model):
     def output_image_path(self):
         return f"/output_images/{self.image_id}.png"
 
-    def set_as_failed(self):
-        self.status = FAILED
+    def mark_for_retry(self):
+        self.status = QUEUED
+        self.failed_count = self.failed_count + 1
 
     def set_as_processed(self):
         self.date_processed = datetime.now(tz=utc)

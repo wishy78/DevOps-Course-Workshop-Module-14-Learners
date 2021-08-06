@@ -19,7 +19,7 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
-      <a class="navbar-brand" href="/">Processing Dashboard (Instance {{instance_id}})</a>
+      <a class="navbar-brand" href="/">Processing Dashboard ({{instance_id}})</a>
     </nav>
 
     <div class="container">
@@ -65,7 +65,7 @@
             {% else %} list-group-item-warning
             {% endif %}"
           >
-            <div style="min-width: 235px;">
+            <div style="min-width: 360px;">
               <p>Customer:<b> {{ order.customer }}</b></p>
               <p>Placed: <b>{{ order.date_placed_local.strftime('%d/%m/%Y %H:%M:%S') }}</b></p>
               <p>Status: <b>{{ order.status }}</b></p>
@@ -74,7 +74,7 @@
               {% endif %}
               {% if order.date_processing %}
                 <p>Processing time: {{ order.processing_duration_seconds }} seconds</p>
-                <p>Processing by instance: {{ order.processed_by }}</p>
+                <p>Processing by: {{ order.processed_by }}</p>
               {% endif %}
               {% if order.edginess != None %}
                 <p>Edginess: {{ order.edginess }}</p>
