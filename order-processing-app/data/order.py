@@ -1,10 +1,9 @@
 from sqlalchemy.dialects.mssql import DATETIMEOFFSET
 from datetime import datetime
 from pytz import utc, timezone
-from pathlib import Path
+from sqlalchemy import text
 
 from data.database import db
-from flask_config import Config
 
 local_timezone = timezone("Europe/London")
 
@@ -26,7 +25,7 @@ class Order(db.Model):
     processed_by = db.Column(db.String(100), nullable=True)
     download = db.Column(db.LargeBinary, nullable=True)
     edginess = db.Column(db.Integer, nullable=True)
-    failed_count = db.Column(db.Integer, nullable=False, default=0)
+    failed_count = db.Column(db.Integer, nullable=False, server_default=text("0"))
 
     def __init__(
         self, product, customer, date_placed, date_processed, date_processing, download, edginess, processed_by
