@@ -354,10 +354,10 @@ As we're updating the chart, update the `version` in `Chart.yaml` too.
 You can run `helm template ./workshop-helm-chart` to preview your changes and see what will get deployed.
 Once you're happy with the template, try upgrading the chart to use the new image: `helm upgrade my-chart ./workshop-helm-chart`.
 
-### Configuring permissions
-
-If you run `kubectl get pods`, then you'll notice that our Pods aren't able to pull the image that we've just published.
+If you run `kubectl get pods`, then you'll notice that our Pods aren't able to pull the image that we've just published. 
 However, we can use a Secret to give our cluster access to the registry, letting the Pods pull the image.
+
+### Configuring permissions
 
 > The syntax for variables and line endings will depend on your terminal.
 > The examples shown here work in Bash.
@@ -410,15 +410,17 @@ The Helm chart and its dependencies should now be reachable and deploy correctly
 
 ## Environment variables & secrets
 
-Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the finance package from M13. You can find these environment variables in the configuration from the `order-processing` app service.
+Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the "finance" service. You can find these environment variables in the configuration from the `order-processing` app service.
 
 > Credentials like DB passwords should be stored as secrets.
 
-You may want to look at the docs on [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/), [creating secrets](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/) and [accessing secrets](https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables)
+You may want to look at the docs on [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/), [creating secrets](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/) and [accessing secrets](https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables).
+
+Once this is complete you should be able to load up your service's external IP in your browser and see the dashboard of orders!
 
 ## Dealing with Services
 
-We can simulate a high load on our Service by running this code in a browser console on the dashboard from Module 13:
+We can simulate a high load on our Service by running this code in a browser console on the dashboard:
 
 ```javascript
 await fetch("/scenario", {
