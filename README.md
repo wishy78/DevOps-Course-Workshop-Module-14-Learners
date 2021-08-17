@@ -412,7 +412,7 @@ The Helm chart and its dependencies should now be reachable and deploy correctly
 
 ## Environment variables & secrets
 
-Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the "finance" service. You can find these environment variables in the configuration from the `order-processing` app service.
+Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the "finance" service. In the list of resource groups in the portal, you should see one available to you for `order-processing`. Inside there, look at the order processing app service's configuration for the set of environment variables you need.
 
 > Credentials like DB passwords should be stored as secrets.
 
@@ -453,7 +453,7 @@ The `requests` fields set the minimum resources available to a Pod, while the `l
 > Setting the `requests` and `limits` fields to the same value gives the Pod a `Guaranteed` QoS level.
 
 But what if we want to be able to scale up and handle peaks in demand while staying within resource limits?
-We could use a HorizontalPodAutoscaler to automatically spin Pods up and down depending on the application load:
+We could use a HorizontalPodAutoscaler to automatically spin Pods up and down depending on the application load. Create a new yaml file in the templates folder with the following content:
 
 ```yaml
 apiVersion: autoscaling/v1
@@ -470,9 +470,9 @@ spec:
   targetCPUUtilizationPercentage: 80
 ```
 
-Now if we watch the load on the Node, we'll see more Pods being spun up as the CPU utilisation increases.
+Now if we watch the load on the Node, we would see more Pods being spun up as the CPU utilisation increases if the cluster had space for them.
 
-Unfortunately, we'll the hit resource limits of our Nodes (5\*500m CPU = 2.5 CPUs), which is more than we've allocated to our Node.
+Unfortunately, we'll the hit resource limits of our Node (5\*500m CPU = 2.5 CPUs), which is more than we've allocated to our Node.
 However, we can use a cluster autoscaler to automatically create more Nodes.
 
 ```bash
