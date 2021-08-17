@@ -32,10 +32,11 @@ Follow [this tutorial](https://helm.sh/docs/intro/install/) to install the Helm 
 
 ### A resource group
 
-Every resource that we create today will live inside a resource group, which will be created and given to you at the start of the workshop.
+Every resource that we create today will live inside a resource group. You can use the same resource group from previous workshops which should be of the form `CohortName_YourName_Workshop`.
 
-> You may find it helpful to follow along in the [Azure Portal](https://portal.azure.com) as we create each resource.
-> You can use the search bar in the Azure Portal to find and view this resource group.
+> You can use the search bar in the [Azure Portal](https://portal.azure.com) to find and view this resource group.
+> You may find it helpful to follow along in the Azure Portal as we create each resource.
+
 
 ## Installing a Service
 
@@ -52,6 +53,7 @@ az aks create --resource-group myResourceGroup --name myAKSCluster --node-count 
 
 > The `az aks create` command can take around 10 minutes to complete.
 > You can view the new cluster in the Azure Portal on the `Overview` page of your resource group.
+> If you see a warning banner at the top of the page about permissions, don't worry. It is warning you that you don't have permission to view the resources created by the cluster, but that's not an issue as you won't need to view or manage those directly.
 
 Before we can manage resources on the cluster, we need to get some access credentials.
 This command stores the necessary credentials in your `~/.kube/config` folder.
