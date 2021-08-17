@@ -543,10 +543,12 @@ We can then publish our app, along with our helm chart, and watch what happens.
 ### Persistent Volumes
 
 The app stores the output images in a local folder.
-If an image is processed by a different Pod to the one receiving the request then the output image will not be visible.
+If an image is processed by a different Pod to the one receiving the request then the output image will not be visible on the dashboard.
 
 We can resolve this by attaching the same Persistent Volume to all our Pod instances.
 Configure a Persistent Volume Claim using the `azurefile` Storage Class in your Helm Chart and mount the volumes in your Deployment definition.
+AKS is able to dynamically provision Azure Files resources on request, so we do not need to manually create a Storage Account + Files resource.
+See <https://docs.microsoft.com/en-us/azure/aks/azure-files-dynamic-pv#create-a-persistent-volume-claim>.
 
 You should also update the configuration of the original App Service to set `SCHEDULED_JOB_ENABLED=false` so only your cluster is doing the processing.
 
