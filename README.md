@@ -408,11 +408,11 @@ Finally, we can update the chart `version` in `Chart.yaml` and upgrade the chart
 helm upgrade my-chart ./workshop-helm-chart
 ```
 
-The Helm chart and its dependencies should now be reachable and deploy correctly.
+The Helm chart and its dependencies should now deploy. The load balancer will be up and running, and the pods should successfully pull the image. However, the application will fail to start up because it's missing required environment variables.
 
 ## Environment variables & secrets
 
-Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the "finance" service. In the list of resource groups in the portal, you should see one available to you for `order-processing`. Inside there, look at the order processing app service's configuration for the set of environment variables you need.
+Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the "finance" service. In the list of resource groups in the portal, you should see one available to you with `order-processing` in the name. Inside there, find the order processing app service and look at its configuration for the environment variables you may need.
 
 > Credentials like DB passwords should be stored as secrets.
 
@@ -422,7 +422,7 @@ Once this is complete you should be able to load up your service's external IP i
 
 ## Dealing with Services
 
-We can simulate a high load on our Service by running this code in a browser console on the dashboard:
+We can simulate a high load on our Service by running this code in a browser console on the app's dashboard:
 
 ```javascript
 await fetch("/scenario", {
