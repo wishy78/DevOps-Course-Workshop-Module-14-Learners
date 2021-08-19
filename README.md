@@ -420,6 +420,12 @@ You may want to look at the docs on [environment variables](https://kubernetes.i
 
 Once this is complete you should be able to load up your service's external IP in your browser and see the dashboard of orders!
 
+Let's set the number of pods back down to two before continuing:
+
+```bash
+helm upgrade --set replicas=2 my-chart ./workshop-helm-chart
+```
+
 ## Dealing with Services
 
 We can simulate a high load on our Service by running this code in a browser console on the app's dashboard:
@@ -433,7 +439,7 @@ await fetch("/scenario", {
 
 Let's run `kubectl top pod` to watch the load on the application increase.
 
-Our Pods don't currently have any resource constraints, so the increasing load will eventually use up all of the available resources, taking out our cluster.
+Our Pods don't currently have any resource constraints, so the increasing load will eventually use up all of the node's available resources.
 
 Let's prevent that by adding some resource constraints to the Deployment:
 
@@ -530,12 +536,10 @@ A typical startup probe definition could look like this:
 startupProbe:
   httpGet:
     path: /health
-    port: liveness-port
-  failureThreshold: 30
-  periodSeconds: 60
+    port: 80
+  failureThreshold: 20
+  periodSeconds: 10
 ```
-
-> This probe could take a long time to check that the app is up and running, so a reduced timeout could be more effective.
 
 We don't have a healthcheck endpoint in our app, so lets add one that just returns 200.
 We can then publish our app, along with our helm chart, and watch what happens.
