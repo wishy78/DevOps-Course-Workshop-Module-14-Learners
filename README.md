@@ -281,7 +281,7 @@ kubectl get pods --watch
 
 ## Working with container registries
 
-We'll now have a look at using images from container registries.
+We'll now have a look at using images from container registries, to deploy a copy of the "order processing" application from Module 13. You will build and publish an image, and then use Helm to deploy it to your cluster.
 
 ### Creating a container registry
 
@@ -414,7 +414,7 @@ The Helm chart and its dependencies should now deploy. The load balancer will be
 
 ## Environment variables & secrets
 
-Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the "finance" service. In the list of resource groups in the portal, you should see one available to you with `order-processing` in the name. Inside there, find the order processing app service and look at its configuration for the environment variables you may need.
+Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the "finance" service. We have provided a copy of the application running as an app service, which you can use for comparison to get your version working in Kubernetes. In the list of resource groups in the portal, you should see one available to you with `order-processing` in the name. Inside there, find the order processing app service and look at its configuration for the environment variables you may need.
 
 > Credentials like DB passwords should be stored as secrets.
 
@@ -430,7 +430,7 @@ helm upgrade --set replicas=2 my-chart ./workshop-helm-chart
 
 ## Dealing with Services
 
-We can simulate a high load on our Service by running this code in a browser console on the app's dashboard:
+We can simulate a high load on our Service by running this code in a browser console on your newly deployed website:
 
 ```javascript
 await fetch("/scenario", {
