@@ -30,6 +30,8 @@ Follow [this tutorial](https://kubernetes.io/docs/tasks/tools/) to install the K
 
 Follow [this tutorial](https://helm.sh/docs/intro/install/) to install the Helm CLI (`helm`).
 
+> If you are on Windows then the `./get_helm.sh` script won't work. So use Chocolatey if you have it. If you don't have Chocolatey, then download the [executable](https://github.com/helm/helm/releases), unzip it somewhere and add that folder to your PATH.
+
 ### A resource group
 
 Every resource that we create today will live inside a resource group. You can use the same resource group from previous workshops which should be of the form `CohortName_YourName_Workshop`.
