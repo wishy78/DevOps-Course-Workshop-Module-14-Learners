@@ -558,9 +558,11 @@ Configure a Persistent Volume Claim using the `azurefile` Storage Class in your 
 AKS is able to dynamically provision Azure Files resources on request, so we do not need to manually create a Storage Account + Files resource.
 See <https://docs.microsoft.com/en-us/azure/aks/azure-files-dynamic-pv#create-a-persistent-volume-claim>.
 
-You should also update the configuration of the original App Service to set `SCHEDULED_JOB_ENABLED=false` so only your cluster is doing the processing.
-
 > You can set the `IMAGE_OUTPUT_FOLDER` environment variable to change where the processing app stores the images it creates.
+
+The original App Service is also processing images, but is not connected to your Azure Files resouce. Find this old App Service in the order-processing resource group in the Azure portal and stop it, or change its configuration to set `SCHEDULED_JOB_ENABLED=false`, so that only your cluster is processing images.
+
+Now all images should show correctly for newly processed orders.
 
 ### Resource levels
 
