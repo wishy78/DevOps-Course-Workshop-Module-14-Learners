@@ -420,6 +420,8 @@ Now that your containers are being deployed correctly we'll want to pass through
 
 You may want to look at the docs on [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/), [creating secrets](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/) and [accessing secrets](https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables).
 
+> Note that the value of an environment variable must be a string. YAML automatically determines the datatype of the value but you can force a value to be a string by wrapping it in quotes.
+
 Once this is complete you should be able to load up your service's external IP in your browser and see the dashboard of orders!
 
 Let's set the number of pods back down to two before continuing:
