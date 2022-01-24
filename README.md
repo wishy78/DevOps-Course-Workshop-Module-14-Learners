@@ -560,7 +560,7 @@ See <https://docs.microsoft.com/en-us/azure/aks/azure-files-dynamic-pv#create-a-
 
 > You can set the `IMAGE_OUTPUT_FOLDER` environment variable to change where the processing app stores the images it creates.
 
-The original App Service is also processing images, but is not connected to your Azure Files resouce. Find this old App Service in the order-processing resource group in the Azure portal and stop it, or change its configuration to set `SCHEDULED_JOB_ENABLED=false`, so that only your cluster is processing images.
+The original App Service is also processing images, but is not connected to your Azure Files resouce. Find this old App Service in the order-processing resource group in the Azure portal and change its configuration to set `SCHEDULED_JOB_ENABLED=false`, so that only your cluster is processing images.
 
 Now all images should show correctly for newly processed orders.
 
@@ -580,6 +580,8 @@ Like with the Order Processing app, you'll need to scrape the environment variab
 
 You'll also want to setup a service so that the Order Processing app can access the Finance Package app and vice versa.
 > Make sure not to expose the Finance Package externally!
+
+Test that this is working by stopping both the non-Kubernetes app services through the Azure Portal, and check that your app keeps receiving and processing images.
 
 ### Security
 
