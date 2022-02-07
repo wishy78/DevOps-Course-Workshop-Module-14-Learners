@@ -574,7 +574,7 @@ You can use the `kubectl top` command to view resource utilisation on Nodes and 
 
 Up to now we've only been working with one Docker image (for the Order Processing app) and the corresponding pods connect to the Finance Package app deployed on Azure. Let's now try incorporating the Finance Package within the cluster.
 
-> The Docker Hub image for the Finance Package app is available under the name `corndelldevopscourse/mod13-workshop-finance-package:scenarios-m14`
+> The Docker Hub image for the Finance Package app is available under the name `corndeldevopscourse/m13-finance-package`
 
 Like with the Order Processing app, you'll need to scrape the environment variables from the app configuration.
 
