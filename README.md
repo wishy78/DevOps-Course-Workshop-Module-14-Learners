@@ -288,10 +288,10 @@ We'll now have a look at using images from container registries, to deploy a cop
 We'll start by using the Azure CLI to create a container registry, which will be hosted by Azure.
 
 ```bash
-az acr create --resource-group myResourceGroup --name myRegistryName --sku Basic
+az acr create --resource-group myResourceGroup --name myregistryname --sku Basic
 ```
 
-> The `myRegistryName` that you pick must be unique within Azure.
+> The `myregistryname` that you pick must be unique within Azure (and should be lowercase).
 >
 > In the Azure Portal, you should now see a container registry on the `Overview` page of your resource group.
 
@@ -322,7 +322,7 @@ Now that we have an image, we can push it to the registry.
 Let's log in to the registry:
 
 ```bash
-az acr login --name myRegistryName
+az acr login --name myregistryname
 ```
 
 And then tag the image specifically for the registry:
@@ -369,7 +369,7 @@ However, we can use a Secret to give our cluster access to the registry, letting
 First, let's enable our registry's admin user so we can manage credentials:
 
 ```bash
-az acr update -n myRegistryName --admin-enabled true
+az acr update -n myregistryname --admin-enabled true
 ```
 
 Next, let's retrieve some credentials that can be used to access the registry:
