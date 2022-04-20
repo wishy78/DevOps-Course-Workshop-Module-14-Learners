@@ -424,6 +424,8 @@ You may want to look at the docs on [environment variables](https://kubernetes.i
 
 Once this is complete you should be able to load up your service's external IP in your browser and see the dashboard of orders!
 
+> If you are still seeing Nginx, you may just need to avoid your browser's cache. Either "hard refresh" the page (CTRL+SHIFT+R on Windows or CMD+SHIFT+R on a Mac), or open it in a Chrome Incongito tab.
+
 Let's set the number of pods back down to two before continuing:
 
 ```bash
