@@ -73,7 +73,7 @@ kubectl get nodes
 You should see a Node that's `Ready`, e.g.:
 
 ```text
-NAME                     STATUS   ROLES   AGE   VERSION 
+NAME                     STATUS   ROLES   AGE   VERSION
 aks-default-28776938-0   Ready    agent   5m    v1.19.11
 ```
 
@@ -112,7 +112,7 @@ spec:
         - name: container-name
           image: nginx
           ports:
-          - containerPort: 80
+            - containerPort: 80
 ```
 
 ```bash
@@ -146,9 +146,9 @@ spec:
   selector:
     app: module-14-pod
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
+    - protocol: TCP
+      port: 80
+      targetPort: 80
 ```
 
 ```bash
@@ -200,7 +200,7 @@ spec:
         - name: container-name
           image: nginx
           ports:
-          - containerPort: 80
+            - containerPort: 80
 ```
 
 ```bash
@@ -357,7 +357,7 @@ As we're updating the chart, update the `version` in `Chart.yaml` too.
 You can run `helm template ./workshop-helm-chart` to preview your changes and see what will get deployed.
 Once you're happy with the template, try upgrading the chart to use the new image: `helm upgrade my-chart ./workshop-helm-chart`.
 
-If you run `kubectl get pods`, then you'll notice that our Pods aren't able to pull the image that we've just published. 
+If you run `kubectl get pods`, then you'll notice that our Pods aren't able to pull the image that we've just published.
 However, we can use a Secret to give our cluster access to the registry, letting the Pods pull the image.
 
 ### Configuring permissions
@@ -439,9 +439,10 @@ We can simulate a high load on our Service by running this code in a browser con
 
 ```javascript
 await fetch("/scenario", {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({scenario: "HighLoad"})})
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ scenario: "HighLoad" }),
+});
 ```
 
 Let's run `kubectl top pod` to watch the load on the application increase.
@@ -510,17 +511,19 @@ We can watch this using `kubectl get node` and `kubectl get pod`.
 
 ```javascript
 await fetch("/scenario", {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({scenario: "Initial"})})
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ scenario: "Initial" }),
+});
 ```
 
 You can also reset the queue if it has grown out of control.
 
 ```javascript
 await fetch("/reset", {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' }})
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+});
 ```
 
 ## Extension exercises
