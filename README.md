@@ -39,7 +39,6 @@ Every resource that we create today will live inside a resource group. You can u
 > You can use the search bar in the [Azure Portal](https://portal.azure.com) to find and view this resource group.
 > You may find it helpful to follow along in the Azure Portal as we create each resource.
 
-
 ## Installing a Service
 
 In this section we'll create a cluster and use it to run an Nginx server behind a load balancer.
@@ -393,16 +392,18 @@ kubectl create secret docker-registry acr-secret \
 
 Now that we have a Secret, we can update `deployment.yaml` to use it:
 
+<!-- prettier-ignore-start -->
 ```yaml
 spec:
   containers:
     - name: container-name
       image: {{ .Values.image }}
       ports:
-      - containerPort: 80
+        - containerPort: 80
   imagePullSecrets:
     - name: acr-secret
 ```
+<!-- prettier-ignore-end -->
 
 Finally, we can update the chart `version` in `Chart.yaml` and upgrade the chart:
 
@@ -467,6 +468,7 @@ The `requests` fields set the minimum resources available to a Pod, while the `l
 But what if we want to be able to scale up and handle peaks in demand while staying within resource limits?
 We could use a HorizontalPodAutoscaler to automatically spin Pods up and down depending on the application load. Create a new yaml file in the templates folder with the following content:
 
+<!-- prettier-ignore-start -->
 ```yaml
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
@@ -481,6 +483,7 @@ spec:
   maxReplicas: 8
   targetCPUUtilizationPercentage: 80
 ```
+<!-- prettier-ignore-end -->
 
 Now if we watch the load on the Node, we would see more Pods being spun up as the CPU utilisation increases if the cluster had space for them.
 
@@ -581,6 +584,7 @@ Up to now we've only been working with one Docker image (for the Order Processin
 Like with the Order Processing app, you'll need to scrape the environment variables from the app configuration.
 
 You'll also want to setup a service so that the Order Processing app can access the Finance Package app and vice versa.
+
 > Make sure not to expose the Finance Package externally!
 
 Test that this is working by stopping both the non-Kubernetes app services through the Azure Portal, and check that your app keeps receiving and processing images.
