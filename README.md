@@ -402,7 +402,7 @@ spec:
     - name: acr-secret
 ```
 
-Finally, we can deploy our changes by upgrading the chart.
+Finally, we can deploy our changes by upgrading the chart:
 
 ```bash
 helm upgrade my-chart ./workshop-helm-chart
