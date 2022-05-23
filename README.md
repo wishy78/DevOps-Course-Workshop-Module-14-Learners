@@ -542,7 +542,7 @@ See <https://docs.microsoft.com/en-us/azure/aks/azure-files-dynamic-pv#create-a-
 
 > You can set the `IMAGE_OUTPUT_FOLDER` environment variable to change where the processing app stores the images it creates.
 
-The original App Service is also processing images, but is not connected to your Azure Files resouce. Find this old App Service in the order-processing resource group in the Azure portal and change its configuration to set `SCHEDULED_JOB_ENABLED=false`, so that only your cluster is processing images.
+The original App Service is also processing images, but is not connected to your Azure Files resource. Find this old App Service in the order-processing resource group in the Azure portal and change its configuration to set `SCHEDULED_JOB_ENABLED=false`, so that only your cluster is processing images.
 
 Now all images should show correctly for newly processed orders.
 
