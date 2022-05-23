@@ -434,14 +434,7 @@ helm upgrade --set replicas=2 my-chart ./workshop-helm-chart
 
 ## Dealing with Services
 
-We can simulate a high load on our Service by running this code in a browser console on your newly deployed website:
-
-```javascript
-await fetch("/scenario", {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({scenario: "HighLoad"})})
-```
+We can simulate a high load on our Service by selecting the "High Load" option from the "scenario" dropdown at the top of the page.
 
 Let's run `kubectl top pod` to watch the load on the application increase.
 
@@ -502,23 +495,10 @@ This should automatically scale up our cluster during high load, which we can wa
 kubectl get node
 ```
 
-If we change our Service back to a lower load one, we should see our Service reduce load gradually.
+If we change our Service back to the initial, lower load, we should see our Service reduce load gradually. Use the scenario picker at the top of the page to do this.
 We can watch this using `kubectl get node` and `kubectl get pod`.
 
-```javascript
-await fetch("/scenario", {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({scenario: "Initial"})})
-```
-
-You can also reset the queue if it has grown out of control.
-
-```javascript
-await fetch("/reset", {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' }})
-```
+You can also clear out the queue if it has grown out of control by selecting "Delete all orders".
 
 ## Extension exercises
 
