@@ -414,7 +414,8 @@ The Helm chart and its dependencies should now deploy. The load balancer will be
 
 ## Environment variables & secrets
 
-Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the "finance" service. We have provided a copy of the application running as an app service, which you can use for comparison to get your version working in Kubernetes. In the list of resource groups in the portal, you should see one available to you with `order-processing` in the name. Inside there, find the order processing app service and look at its configuration for the environment variables you may need.
+Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the "finance" service. We have provided a copy of the application running as an app service, which you can use for comparison to get your version working in Kubernetes. In the list of resource groups in the portal, you should see one available to you with `order-processing` in the name.
+Inside there, find the order processing app service and look at its configuration for the environment variables. You need all of the database or "finance" related variables. The "scheduled job" variables are used by the app but are optional.
 
 > Credentials like DB passwords should be stored as secrets.
 
@@ -424,7 +425,7 @@ You may want to look at the docs on [environment variables](https://kubernetes.i
 
 Once this is complete you should be able to load up your service's external IP in your browser and see the dashboard of orders!
 
-> If you are still seeing Nginx, you may just need to avoid your browser's cache. Either "hard refresh" the page (CTRL+SHIFT+R on Windows or CMD+SHIFT+R on a Mac), or open it in a Chrome Incongito tab.
+> If you are still seeing Nginx, you may just need to avoid your browser's cache. Either "hard refresh" the page (CTRL+SHIFT+R on Windows or CMD+SHIFT+R on a Mac), or open it in a Chrome Incognito tab.
 
 Let's set the number of pods back down to two before continuing:
 
@@ -560,7 +561,7 @@ Up to now we've only been working with one Docker image (for the Order Processin
 
 Like with the Order Processing app, you'll need to scrape the environment variables from the app configuration.
 
-You'll also want to setup a service so that the Order Processing app can access the Finance Package app and vice versa.
+You'll also want to set up a service so that the Order Processing app can access the Finance Package app and vice versa.
 > Make sure not to expose the Finance Package externally!
 
 Test that this is working by stopping both the non-Kubernetes app services through the Azure Portal, and check that your app keeps receiving and processing images.
