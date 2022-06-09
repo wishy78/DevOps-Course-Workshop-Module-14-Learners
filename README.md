@@ -276,8 +276,7 @@ And then we can watch the new Pod being created:
 kubectl get pods --watch
 ```
 
-> Each time we make changes to the Helm chart, we should update the `Chart.yaml` version.
-> If we also update the application that the chart points to, we should update `appVersion` too.
+> It is good practice to update the versions in Chart.yaml each time we make changes to the Helm chart or application, but this is not required.
 
 ## Working with container registries
 
@@ -351,7 +350,6 @@ First, add a variable in `values.yaml`, referencing our newly created image, e.g
 > `<loginServer>` should be replaced, as before.
 
 Next, update `deployment.yaml` to use this value.
-As we're updating the chart, update the `version` in `Chart.yaml` too.
 
 > Helm uses the syntax `{{ .Values.variableName }}` in templates (using Go templates).
 
@@ -404,7 +402,7 @@ spec:
     - name: acr-secret
 ```
 
-Finally, we can update the chart `version` in `Chart.yaml` and upgrade the chart:
+Finally, we can deploy our changes by upgrading the chart:
 
 ```bash
 helm upgrade my-chart ./workshop-helm-chart
