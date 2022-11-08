@@ -67,7 +67,7 @@ def output_images(path):
 
 @app.route("/scenario", methods=["POST"])
 def set_scenario():
-    scenario = request.json["scenario"]
+    scenario = request.form["scenario"]
 
     if scenario == 'DeleteOrders':
         clear_orders()
