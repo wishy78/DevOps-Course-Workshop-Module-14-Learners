@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory, redirect
 from datetime import datetime, timezone
 
 from flask_config import Config
@@ -25,10 +25,16 @@ def index():
     recently_placed_count = get_recently_placed_count()
     recently_processed_count = get_recently_processed_count()
 
+    scenarios = [
+        { 'display': 'High Load', 'value': 'HighLoad' },
+        { 'display': 'Initial Load', 'value': 'Initial' },
+        { 'display': 'Delete all orders', 'value': 'DeleteOrders' }
+    ]
+
     return render_template(
         "layout.html", orders=orders, queue_count=queue_count, recently_placed_count=recently_placed_count,
         recently_processed_count=recently_processed_count, total_count=total_orders,
-        instance_id=app.config["INSTANCE_ID"]
+        instance_id=app.config["INSTANCE_ID"], scenarios=scenarios
     )
 
 @app.route("/count")
@@ -63,21 +69,17 @@ def output_images(path):
 def set_scenario():
     scenario = request.json["scenario"]
 
+    if scenario == 'DeleteOrders':
+        clear_orders()
+        return redirect('/')
+
     response = requests.post(
         app.config["FINANCE_PACKAGE_URL"] + "/scenario",
         json=scenario
     )
     response.raise_for_status()
 
-    return f"Set scenario to: {scenario}"
-
-
-
-@app.route("/reset", methods=["POST"])
-def reset_orders():
-    rows = count_orders()
-    clear_orders()
-    return f"Deleted {rows} rows."
+    return redirect('/')
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 # Use official Python base image
-FROM python:3.9-slim-buster as base
+FROM --platform=linux/amd64 python:3.9-slim-buster as base
 
 ENV APP_INSTALL=/app
 ENV PYTHONPATH=${APP_INSTALL}

@@ -275,8 +275,7 @@ And then we can watch the new Pod being created:
 kubectl get pods --watch
 ```
 
-> Each time we make changes to the Helm chart, we should update the `Chart.yaml` version.
-> If we also update the application that the chart points to, we should update `appVersion` too.
+> It is good practice to update the versions in Chart.yaml each time we make changes to the Helm chart or application, but this is not required.
 
 ## Working with container registries
 
@@ -350,7 +349,6 @@ First, add a variable in `values.yaml`, referencing our newly created image, e.g
 > `<loginServer>` should be replaced, as before.
 
 Next, update `deployment.yaml` to use this value.
-As we're updating the chart, update the `version` in `Chart.yaml` too.
 
 > Helm uses the syntax `{{ .Values.variableName }}` in templates (using Go templates).
 
@@ -405,7 +403,7 @@ spec:
 ```
 <!-- prettier-ignore-end -->
 
-Finally, we can update the chart `version` in `Chart.yaml` and upgrade the chart:
+Finally, we can deploy our changes by upgrading the chart:
 
 ```bash
 helm upgrade my-chart ./workshop-helm-chart
@@ -415,7 +413,8 @@ The Helm chart and its dependencies should now deploy. The load balancer will be
 
 ## Environment variables & secrets
 
-Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the "finance" service. We have provided a copy of the application running as an app service, which you can use for comparison to get your version working in Kubernetes. In the list of resource groups in the portal, you should see one available to you with `order-processing` in the name. Inside there, find the order processing app service and look at its configuration for the environment variables you may need.
+Now that your containers are being deployed correctly we'll want to pass through the appropriate environment variables to link up to the "finance" service. We have provided a copy of the application running as an app service, which you can use for comparison to get your version working in Kubernetes. In the list of resource groups in the portal, you should see one available to you with `order-processing` in the name.
+Inside there, find the order processing app service and look at its configuration for the environment variables. You need all of the database or "finance" related variables. The "scheduled job" variables are used by the app but are optional.
 
 > Credentials like DB passwords should be stored as secrets.
 
@@ -425,7 +424,7 @@ You may want to look at the docs on [environment variables](https://kubernetes.i
 
 Once this is complete you should be able to load up your service's external IP in your browser and see the dashboard of orders!
 
-> If you are still seeing Nginx, you may just need to avoid your browser's cache. Either "hard refresh" the page (CTRL+SHIFT+R on Windows or CMD+SHIFT+R on a Mac), or open it in a Chrome Incongito tab.
+> If you are still seeing Nginx, you may just need to avoid your browser's cache. Either "hard refresh" the page (CTRL+SHIFT+R on Windows or CMD+SHIFT+R on a Mac), or open it in a Chrome Incognito tab.
 
 Let's set the number of pods back down to two before continuing:
 
@@ -435,15 +434,7 @@ helm upgrade --set replicas=2 my-chart ./workshop-helm-chart
 
 ## Dealing with Services
 
-We can simulate a high load on our Service by running this code in a browser console on your newly deployed website:
-
-```javascript
-await fetch("/scenario", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ scenario: "HighLoad" }),
-});
-```
+We can simulate a high load on our Service by selecting the "High Load" option from the "scenario" dropdown at the top of the page.
 
 Let's run `kubectl top pod` to watch the load on the application increase.
 
@@ -506,25 +497,10 @@ This should automatically scale up our cluster during high load, which we can wa
 kubectl get node
 ```
 
-If we change our Service back to a lower load one, we should see our Service reduce load gradually.
+If we change our Service back to the initial, lower load, we should see our Service reduce load gradually. Use the scenario picker at the top of the page to do this.
 We can watch this using `kubectl get node` and `kubectl get pod`.
 
-```javascript
-await fetch("/scenario", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ scenario: "Initial" }),
-});
-```
-
-You can also reset the queue if it has grown out of control.
-
-```javascript
-await fetch("/reset", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-});
-```
+You can also clear out the queue if it has grown out of control by selecting "Delete all orders".
 
 ## Extension exercises
 
@@ -568,7 +544,7 @@ See <https://docs.microsoft.com/en-us/azure/aks/azure-files-dynamic-pv#create-a-
 
 > You can set the `IMAGE_OUTPUT_FOLDER` environment variable to change where the processing app stores the images it creates.
 
-The original App Service is also processing images, but is not connected to your Azure Files resouce. Find this old App Service in the order-processing resource group in the Azure portal and change its configuration to set `SCHEDULED_JOB_ENABLED=false`, so that only your cluster is processing images.
+The original App Service is also processing images, but is not connected to your Azure Files resource. Find this old App Service in the order-processing resource group in the Azure portal and change its configuration to set `SCHEDULED_JOB_ENABLED=false`, so that only your cluster is processing images.
 
 Now all images should show correctly for newly processed orders.
 
@@ -586,7 +562,7 @@ Up to now we've only been working with one Docker image (for the Order Processin
 
 Like with the Order Processing app, you'll need to scrape the environment variables from the app configuration.
 
-You'll also want to setup a service so that the Order Processing app can access the Finance Package app and vice versa.
+You'll also want to set up a service so that the Order Processing app can access the Finance Package app and vice versa.
 
 > Make sure not to expose the Finance Package externally!
 
