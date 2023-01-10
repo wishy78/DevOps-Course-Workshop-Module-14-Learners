@@ -207,7 +207,7 @@ spec:
 kubectl apply -f module-14-deployment-3-replicas.yaml
 ```
 
-Kubernetes will use the `app: module-14` label to compare what's currently deployed to the cluster (two Pods), with what we want to be deployed (three Pods).
+Kubernetes will use the `app: module-14-pod` label to compare what's currently deployed to the cluster (two Pods), with what we want to be deployed (three Pods).
 It will then create an additional Pod.
 
 We can check that we now have three Pods.
