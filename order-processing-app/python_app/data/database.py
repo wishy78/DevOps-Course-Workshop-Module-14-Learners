@@ -135,7 +135,7 @@ def add_orders(orders):
 
 
 def clear_orders():
-    db.session.execute("TRUNCATE TABLE [orders]")
+    db.session.execute(text("TRUNCATE TABLE [orders]"))
     db.session.commit()
 
 
