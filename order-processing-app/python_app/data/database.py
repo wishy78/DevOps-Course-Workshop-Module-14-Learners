@@ -13,7 +13,7 @@ from python_app.data.order import Order, PROCESSING, QUEUED, FAILED
 def get_next_order_to_process() -> Order:
     # Find the next queued order and mark it as "Processing".
     updated_row_ids = list(
-        db.session.execute(
+        db.session.execute(text(
             """
     UPDATE [orders]
     SET status = 'Processing',
@@ -26,7 +26,7 @@ def get_next_order_to_process() -> Order:
         WHERE orders.status = 'Queued'
         ORDER BY orders.date_placed ASC
     )
-    """,
+    """),
             params={
                 "currentTime": datetime.now(tz=utc),
                 "instanceId": Config.INSTANCE_ID,
