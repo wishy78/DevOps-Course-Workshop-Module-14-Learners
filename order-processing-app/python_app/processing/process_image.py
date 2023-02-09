@@ -1,9 +1,10 @@
 from typing import Tuple
-from utils.timeit import time_it
-from processing.canny_edge_detector import CannyEdgeDetector
 from PIL import Image
 import numpy as np
 import math
+
+from python_app.processing.canny_edge_detector import CannyEdgeDetector
+from python_app.utils.timeit import time_it
 
 TARGET_SIZE_PX = 1_000_000
 

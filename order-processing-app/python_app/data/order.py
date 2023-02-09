@@ -3,7 +3,7 @@ from datetime import datetime
 from pytz import utc, timezone
 from sqlalchemy import text
 
-from data.database import db
+from python_app.data.database import db
 
 local_timezone = timezone("Europe/London")
 

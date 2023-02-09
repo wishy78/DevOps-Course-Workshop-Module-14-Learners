@@ -1,10 +1,10 @@
 # Canny edge detector implementation
 # See https://towardsdatascience.com/canny-edge-detection-step-by-step-in-python-computer-vision-b49c3a2d8123
-
-from utils.timeit import time_it
 from scipy import ndimage
 from scipy.ndimage.filters import convolve
 import numpy as np
+
+from python_app.utils.timeit import time_it
 
 class CannyEdgeDetector:
     def __init__(
