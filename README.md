@@ -418,7 +418,7 @@ Inside there, find the order processing app service and look at its configuratio
 
 > Credentials like DB passwords should be stored as secrets.
 
-You may want to look at the docs on [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/), [creating secrets](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/) and [accessing secrets](https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables).
+You may want to look at the docs on [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/), [creating secrets](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/#create-a-secret) and [accessing secrets](https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/#define-container-environment-variables-using-secret-data).
 
 > Note that the value of an environment variable must be a string. YAML automatically determines the datatype of the value but you can force a value to be a string by wrapping it in quotes.
 

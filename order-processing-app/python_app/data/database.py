@@ -1,20 +1,19 @@
 from datetime import datetime, timedelta
 from pytz import utc
-from sqlalchemy import asc
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import or_, and_
+from sqlalchemy import asc, or_, and_, text
 import logging
 
-from flask_config import Config
+from python_app.flask_config import Config
 
 db = SQLAlchemy()
-from data.order import Order, PROCESSING, QUEUED, FAILED
+from python_app.data.order import Order, PROCESSING, QUEUED, FAILED
 
 
 def get_next_order_to_process() -> Order:
     # Find the next queued order and mark it as "Processing".
     updated_row_ids = list(
-        db.session.execute(
+        db.session.execute(text(
             """
     UPDATE [orders]
     SET status = 'Processing',
@@ -27,7 +26,7 @@ def get_next_order_to_process() -> Order:
         WHERE orders.status = 'Queued'
         ORDER BY orders.date_placed ASC
     )
-    """,
+    """),
             params={
                 "currentTime": datetime.now(tz=utc),
                 "instanceId": Config.INSTANCE_ID,
@@ -136,7 +135,7 @@ def add_orders(orders):
 
 
 def clear_orders():
-    db.session.execute("TRUNCATE TABLE [orders]")
+    db.session.execute(text("TRUNCATE TABLE [orders]"))
     db.session.commit()
 
 

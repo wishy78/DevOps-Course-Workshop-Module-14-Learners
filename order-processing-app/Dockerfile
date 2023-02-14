@@ -12,8 +12,12 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 RUN curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list
 RUN apt-get update && apt-get install unixodbc-dev g++ msodbcsql17 mssql-tools -y
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Install poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH=${PATH}:/root/.local/bin
+
+COPY pyproject.toml poetry.toml ./
+RUN poetry install
 
 COPY . /app
 
@@ -29,7 +33,7 @@ ENV FLASK_ENV=production
 EXPOSE 80
 
 # Only one worker so we don't have multiple background job schedulers
-ENTRYPOINT gunicorn --bind 0.0.0.0:${PORT} --workers 1 'app:app'
+ENTRYPOINT gunicorn --bind 0.0.0.0:${PORT} --workers 1 'python_app.app:app'
 
 ####################################
 # Local Development Image

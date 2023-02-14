@@ -4,10 +4,10 @@ from PIL import Image
 from pathlib import Path
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from processing.process_image import process_image
-from utils.timeit import time_it
-from data.database import get_next_order_to_process, mark_retried_orders_as_failed, requeue_stuck_orders, save_order
-from flask_config import Config
+from python_app.processing.process_image import process_image
+from python_app.utils.timeit import time_it
+from python_app.data.database import get_next_order_to_process, mark_retried_orders_as_failed, requeue_stuck_orders, save_order
+from python_app.flask_config import Config
 
 
 def initialise_scheduled_jobs(app):
