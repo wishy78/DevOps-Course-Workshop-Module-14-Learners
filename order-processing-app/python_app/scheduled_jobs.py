@@ -1,3 +1,4 @@
+import logging
 import requests
 from datetime import datetime
 from PIL import Image
@@ -8,6 +9,7 @@ from python_app.processing.process_image import process_image
 from python_app.utils.timeit import time_it
 from python_app.data.database import get_next_order_to_process, mark_retried_orders_as_failed, requeue_stuck_orders, save_order
 from python_app.flask_config import Config
+from flask import current_app
 
 
 def initialise_scheduled_jobs(app):
@@ -61,6 +63,9 @@ def load_img(url) -> Image.Image:
 
 @time_it
 def save_image(pic: Image.Image, name: str):
-    dir_path = Path(Config.IMAGE_OUTPUT_FOLDER)
-    dir_path.mkdir(exist_ok=True)
-    pic.save(dir_path.joinpath(name + ".png"), "PNG")
+    app_path = Path(current_app.root_path)
+    image_dir_path = app_path.joinpath(Config.IMAGE_OUTPUT_FOLDER)
+    image_dir_path.mkdir(exist_ok=True)
+    output_path = image_dir_path.joinpath(name + ".png")
+    logging.info(f"Saving processed image to path: {output_path}")
+    pic.save(output_path, "PNG")
